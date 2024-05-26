@@ -1,90 +1,117 @@
 import {BsSearch} from 'react-icons/bs'
+
 import './index.css'
+
 const FiltersGroup = props => {
-  const renderFilterList = () => {
+  const renderRatingsFiltersList = () => {
     const {ratingsList} = props
-    ratingsList.map(rating => {
-      const {activeRating, changeRating} = props
+
+    return ratingsList.map(rating => {
+      const {changeRating, activeRatingId} = props
+      const onClickRatingItem = () => changeRating(rating.ratingId)
+
       const ratingClassName =
-        rating.ratingId === activeRating ? 'ratings app' : 'ratings'
-      const onClickRatingId = () => changeRating(rating.ratingId)
+        activeRatingId === rating.ratingId ? `and-up active-rating` : `and-up`
+
       return (
         <li
-          className="list-container"
+          className="rating-item"
           key={rating.ratingId}
-          onClick={onClickRatingId}
+          onClick={onClickRatingItem}
         >
           <img
             src={rating.imageUrl}
             alt={`rating ${rating.ratingId}`}
-            className="image-1"
+            className="rating-image"
           />
           <p className={ratingClassName}>& up</p>
         </li>
       )
     })
   }
-  const ratingsList = () => (
-    <div className="containers">
-      <h1 className="header">Rating</h1>
-      <ul className="unorder-list">{renderFilterList()}</ul>
+
+  const renderRatingsFilters = () => (
+    <div>
+      <h1 className="rating-heading">Rating</h1>
+      <ul className="ratings-list">{renderRatingsFiltersList()}</ul>
     </div>
   )
-  const renderCategoryList = () => {
+
+  const renderCategoriesList = () => {
     const {categoryOptions} = props
-    categoryOptions.map(category => {
-      const {activeCategory, changeCategory} = props
-      const onClickOptionsCategory = () => changeCategory(category.categoryId)
-      const categoryS =
-        activeCategory === category.categoryId ? 'categorys name' : 'categorys'
+
+    return categoryOptions.map(category => {
+      const {changeCategory, activeCategoryId} = props
+      const onClickCategoryItem = () => changeCategory(category.categoryId)
+      const isActive = category.categoryId === activeCategoryId
+      const categoryClassName = isActive
+        ? `category-name active-category-name`
+        : `category-name`
+
       return (
-        <li className="contain" onClick={onClickOptionsCategory}>
-          <p className={categoryS}>{category.name}</p>
+        <li
+          className="category-item"
+          key={category.categoryId}
+          onClick={onClickCategoryItem}
+        >
+          <p className={categoryClassName}>{category.name}</p>
         </li>
       )
     })
   }
-  const renderCategoryFilter = () => (
-    <div className="cons">
-      <h1 className="heads">Category</h1>
-      <ul className="unorder">{renderCategoryList()}</ul>
-    </div>
+
+  const renderProductCategories = () => (
+    <>
+      <h1 className="category-heading">Category</h1>
+      <ul className="categories-list">{renderCategoriesList()}</ul>
+    </>
   )
+
+  const onEnterSearchInput = event => {
+    const {enterSearchInput} = props
+    if (event.key === 'Enter') {
+      enterSearchInput()
+    }
+  }
+
+  const onChangeSearchInput = event => {
+    const {changeSearchInput} = props
+    changeSearchInput(event.target.value)
+  }
+
   const renderSearchInput = () => {
-    const onClickSearchKey = event => {
-      const {eventKey} = props
-      if (event.key === 'Enter') {
-        eventKey()
-      }
-    }
-    const onClickChangeInput = event => {
-      const {changeInput} = props
-      changeInput(event.target.value)
-    }
     const {searchInput} = props
     return (
-      <div className="conssss">
+      <div className="search-input-container">
         <input
-          type="search"
           value={searchInput}
-          onChange={onClickChangeInput}
-          onKeyDown={onClickSearchKey}
-          className="input-container"
+          type="search"
+          className="search-input"
           placeholder="Search"
+          onChange={onChangeSearchInput}
+          onKeyDown={onEnterSearchInput}
         />
+        <BsSearch className="search-icon" />
       </div>
     )
   }
-  const {clearFilter} = props
+
+  const {clearFilters} = props
+
   return (
-    <div className="bg-containers">
+    <div className="filters-group-container">
       {renderSearchInput()}
-      {renderCategoryFilter()}
-      {ratingsList()}
-      <button onClick={clearFilter} className="button-container">
-        Clear Filter
+      {renderProductCategories()}
+      {renderRatingsFilters()}
+      <button
+        type="button"
+        className="clear-filters-btn"
+        onClick={clearFilters}
+      >
+        Clear Filters
       </button>
     </div>
   )
 }
+
 export default FiltersGroup
